@@ -1,6 +1,69 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
+#include "List.h"
+
+typedef struct
+{
+    char name[20];
+    char value[15];
+
+}SYMBOL;
+
+typedef struct
+{
+    char name[4];
+    char value[7];
+
+}COMPUTE;
+
+typedef struct
+{
+    char name[4];
+    char value[3];
+
+
+}DEST;
+
+typedef struct
+{
+    char name[4];
+    char value[3];
+
+}JMP;
+
+int compare_symbol(void *arg1,void *arg2)
+{
+    char *name1=((SYMBOL*)(arg1))->name;
+    char *name2=((SYMBOL*)(arg2))->name;
+
+    return strcmp(name1,name2);
+}
+
+int compare_jmp(void *arg1,void *arg2)
+{
+    char *name1=((JMP*)(arg1))->name;
+    char *name2=((JMP*)(arg2))->name;
+
+    return strcmp(name1,name2);
+}
+
+int compare_dest(void *arg1,void *arg2)
+{
+    char *name1=((DEST*)(arg1))->name;
+    char *name2=((DEST*)(arg2))->name;
+
+    return strcmp(name1,name2);
+}
+
+int compare_compute(void *arg1,void *arg2)
+{
+    char *name1=((COMPUTE*)(arg1))->name;
+    char *name2=((COMPUTE*)(arg2))->name;
+
+    return strcmp(name1,name2);
+}
 
 void modifyName(char *fname)
 {
@@ -111,6 +174,9 @@ void scan2(FILE *fptr,FILE *outPtr)
             fprintf(outPtr,"0");
             aInstruction(fptr,outPtr);
         }
+
+        else
+            fprintf(outPtr,"%c",c);
 }
 
 int main()
