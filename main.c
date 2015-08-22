@@ -2,6 +2,27 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+void dec_binary(int num,char bin[15])
+{
+    int i,mod;
+
+    for(i=0;i<15;i++)
+        bin[i]='0';
+
+    i--;
+
+    while(num)
+    {
+        mod=num%2;
+
+        if(mod)
+            bin[i]='1';
+
+        num/=2;
+        i--;
+    }
+}
+
 void scan1(FILE *fptr,FILE *inptr)
 {
     int pc=0;
