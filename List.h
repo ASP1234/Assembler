@@ -47,6 +47,9 @@ static bool _search(void* key,NODE** previous,NODE** current,LIST* list)
     {
         *previous=*current;
         *current=(*current)->link;
+
+        if(*current==NULL)
+            break;
     }
 
     if(result==0)

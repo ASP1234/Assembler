@@ -1,6 +1,10 @@
 # depslib dependency file v1.0
-1440262529 source:c:\users\nimish\desktop\assembler\main.c
+1440313416 source:c:\users\nimish\desktop\assembler\main.c
 	<stdio.h>
 	<stdlib.h>
 	<stdbool.h>
+	<string.h>
+	"List.h"
+
+1440271053 c:\users\nimish\desktop\assembler\list.h
 
