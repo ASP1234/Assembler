@@ -493,19 +493,29 @@ void scan2(FILE *fptr,FILE *outPtr)
         }
 }
 
-int main()
+int main(int argc,char** argv)
 {
     FILE *fptr,*outPtr;
     char fname[20];
 
-    printf("Enter the filename: ",fname);
-    scanf("%s",fname);
+    if(argc==2)
+        strcpy(fname,argv[1]);
+    else
+    {
+        printf("\nUsage: Assembler filename.asm\n");
+        return 3;
+    }
 
     fptr=fopen(fname,"r");
     outPtr=fopen("main.asm","w");
 
-    if(!fptr&&!outPtr)
-        return 1;
+    if(!fptr||!outPtr)
+        {
+            fclose(fptr);
+            fclose(outPtr);
+            remove("main.asm");
+            return 1;
+        }
 
     else
         {
@@ -527,8 +537,13 @@ int main()
     modifyName(fname);
     outPtr=fopen(fname,"w");
 
-    if(!fptr&&!outPtr)
-        return 2;
+    if(!fptr||!outPtr)
+       {
+           fclose(fptr);
+           fclose(outPtr);
+           remove("main.asm");
+           return 2;
+       }
 
 
     else
