@@ -5,10 +5,11 @@
 #include "List.h"
 
 LIST *computeList,*symbolList,*jmpList;
+int varCounter=16;
 
 typedef struct
 {
-    char name[20];
+    char name[60];
     char value[15];
 
 }SYMBOL;
@@ -307,20 +308,44 @@ void aInstruction(FILE *fptr,FILE *outPtr)
     int i=0,num;
     char bin[15],dec[6],c;
 
-    do
+    fscanf(fptr,"%c",&c);
+
+    if(c>='0'&&c<='9')
     {
-        fscanf(fptr,"%c",&c);
 
-        if(c=='\n')
-            dec[i]='\0';
+        while(c!='\n')
+            {
+                dec[i++]=c;
+                fscanf(fptr,"%c",&c);
+            }
+
+        dec[i]='\0';
+        num=atoi(dec);
+        dec_binary(num,bin);
+    }
+
+    else
+    {
+        SYMBOL *dataPtr=(SYMBOL*)malloc(sizeof(SYMBOL)),*dataOutPtr;
+
+         while(c!='\n')
+            {
+                dataPtr->name[i++]=c;
+                fscanf(fptr,"%c",&c);
+            }
+
+        dataPtr->name[i]='\0';
+
+        if(searchList((void*)(&dataOutPtr),dataPtr,symbolList))
+            strcpy(bin,dataOutPtr->value);
+
         else
-            dec[i]=c;
-        i++;
-
-    }while(c!='\n');
-
-    num=atoi(dec);
-    dec_binary(num,bin);
+        {
+            dec_binary(varCounter++,dataPtr->value);
+            addNode(dataPtr,symbolList);
+            strcpy(bin,dataPtr->value);
+        }
+    }
 
     for(i=0;i<15;i++)
         fprintf(outPtr,"%c",bin[i]);
@@ -399,7 +424,7 @@ void cInstruction(FILE *fptr,FILE *outPtr,char c)
 void scan1(FILE *fptr,FILE *outPtr)
 {
     int PC=-1,i;
-    char c,bin[15],name[20];
+    char c,bin[15],name[70];
     bool newlineFlag=true;
 
     while(fscanf(fptr,"%c",&c)!=EOF)
@@ -440,7 +465,6 @@ void scan1(FILE *fptr,FILE *outPtr)
                         fscanf(fptr,"%c",&c);
 
                       addLabel(name,bin,symbolList);
-                      printf("%d\n",PC+1);
                       break;
 
             default: fprintf(outPtr,"%c",c);
@@ -509,6 +533,10 @@ int main()
 
     else
         scan2(fptr,outPtr);
+
+    fclose(fptr);
+    fclose(outPtr);
+    remove("main.asm");
 
     return 0;
 }
