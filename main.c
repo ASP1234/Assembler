@@ -514,6 +514,7 @@ int main(int argc,char** argv)
             fclose(fptr);
             fclose(outPtr);
             remove("main.asm");
+            printf("\nError in opening file\n");
             return 1;
         }
 
@@ -542,6 +543,7 @@ int main(int argc,char** argv)
            fclose(fptr);
            fclose(outPtr);
            remove("main.asm");
+           printf("\nError in creating .hack file. You have insufficient memory\n");
            return 2;
        }
 
