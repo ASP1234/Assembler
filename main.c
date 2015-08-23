@@ -181,6 +181,15 @@ int addSymbol(SYMBOL* symbol,char *name,char *value,LIST *list)
     return addNode(symbol,list);
 }
 
+int addLabel(char *name,char *value,LIST *list)
+{
+    SYMBOL* symbol=(SYMBOL*)malloc(sizeof(SYMBOL));
+    strcpy(symbol->name,name);
+    strcpy(symbol->value,value);
+
+    return addNode(symbol,list);
+}
+
 int init_symbol(LIST* list)
 {
     char bin[15];
@@ -389,8 +398,8 @@ void cInstruction(FILE *fptr,FILE *outPtr,char c)
 
 void scan1(FILE *fptr,FILE *outPtr)
 {
-    int pc=0;
-    char c;
+    int PC=-1,i;
+    char c,bin[15],name[20];
     bool newlineFlag=true;
 
     while(fscanf(fptr,"%c",&c)!=EOF)
@@ -398,7 +407,7 @@ void scan1(FILE *fptr,FILE *outPtr)
             {
                 newlineFlag=true;
                 fprintf(outPtr,"\n");
-                pc++;
+                PC++;
             }
 
         else
@@ -410,16 +419,35 @@ void scan1(FILE *fptr,FILE *outPtr)
                             while(c!='\n')
                                 fscanf(fptr,"%c",&c);
                             if(!newlineFlag)
-                            fprintf(outPtr,"\n");
+                            {
+                                fprintf(outPtr,"\n");
+                                PC++;
+                            }
                             break;
 
             case ' ': break;
+            case '(': dec_binary(PC+1,bin);
+
+                      fscanf(fptr,"%c",&c);
+                      for(i=0;c!=')';i++)
+                      {
+                          name[i]=c;
+                          fscanf(fptr,"%c",&c);
+                      }
+                      name[i]='\0';
+
+                      while(c!='\n')
+                        fscanf(fptr,"%c",&c);
+
+                      addLabel(name,bin,symbolList);
+                      printf("%d\n",PC+1);
+                      break;
+
             default: fprintf(outPtr,"%c",c);
                      newlineFlag=false;
                      break;
         }
 
-        printf("PC: %d",pc);
 }
 
 
@@ -456,7 +484,17 @@ int main()
         return 1;
 
     else
-        scan1(fptr,outPtr);
+        {
+            computeList=createList(compare_compute);
+            jmpList=createList(compare_jmp);
+            symbolList=createList(compare_symbol);
+
+            init_compute(computeList);
+            init_jmp(jmpList);
+            init_symbol(symbolList);
+
+            scan1(fptr,outPtr);
+        }
 
     fclose(fptr);
     fclose(outPtr);
@@ -470,17 +508,7 @@ int main()
 
 
     else
-        {
-            computeList=createList(compare_compute);
-            jmpList=createList(compare_jmp);
-            symbolList=createList(compare_symbol);
-
-            init_compute(computeList);
-            init_jmp(jmpList);
-            init_symbol(symbolList);
-
-            scan2(fptr,outPtr);
-        }
+        scan2(fptr,outPtr);
 
     return 0;
 }
